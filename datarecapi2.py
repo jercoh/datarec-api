@@ -23,10 +23,14 @@ else:
 
 db = MongoEngine(app)
 api = MongoRest(app)
+base_url = '/api/v1.0'
 
 class Content(db.EmbeddedDocument):
     content = db.StringField()
     url = db.URLField()
+
+class ContentResource(Resource):
+    document = Content
 
 class User(db.Document):
     name = db.StringField(unique=True, required=True)
@@ -34,8 +38,14 @@ class User(db.Document):
 
 class UserResource(Resource):
     document = User
+    filters = {
+        'name': [ops.Exact, ops.Startswith]
+    }
+    related_resources = {
+        'contents' : ContentResource
+    }
 
-@api.register(name='users', url='/users/')
+@api.register(name='users', url= base_url+'/users/')
 class UserView(ResourceView):
     resource = UserResource
     methods = [methods.Create, methods.Update, methods.Fetch, methods.List, methods.Delete]
