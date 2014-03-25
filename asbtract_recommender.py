@@ -4,7 +4,11 @@ import numpy as numpy
 import re
 import operator
 import argparse
+import datarec_db
+import pymongo
 
+db = pymongo.MongoClient()['test_database']
+cnames = ['id', 'email', 'history']
 
 def sim(u,v):
 	norm_u = numpy.linalg.norm(u)
@@ -68,7 +72,7 @@ def read_table_from_file(file, cnames):
 
 
 def get_object_list(dataFrame):
-	object_iter = (set(x.split('|')) for x in dataFrame.user_history)
+	object_iter = (set(x.split('|')) for x in getattr(dataFrame, cnames[2]))
 	objects = sorted(set.union(*object_iter))
 	sort_nicely(objects)
 	return objects
@@ -77,7 +81,7 @@ def prepare_data(file):
 	user_item_matrix = read_table_from_file(file, cnames)
 	objects = get_object_list(user_item_matrix)
 	dummies = DataFrame(numpy.zeros((len(user_item_matrix), len(objects))), columns=objects)
-	for i, ph in enumerate(user_item_matrix.user_history):
+	for i, ph in enumerate(getattr(user_item_matrix, cnames[2])):
 		dummies.ix[i, ph.split('|')] = 1
 	#object_windic = user_item_matrix.join(dummies.add_prefix('object_'))
 	object_windic = user_item_matrix.join(dummies)
@@ -104,7 +108,7 @@ def get_n_most_similar_objects(n, object_id):
 def get_n_recommended_objects_for_user(n, id):#n et id sont des int
 	similarity = {}
 	C = set()
-	user = dataFrame['user_id'].map(lambda x: x == id)
+	user = dataFrame[cnames[0]].map(lambda x: x == id)
 	user_history = dataFrame[user][cnames[2]].iloc[0].split('|')
 	for object in user_history:
 		similar_objects = get_n_most_similar_objects(2*n, object)
@@ -126,20 +130,28 @@ def get_n_recommended_objects_for_user(n, id):#n et id sont des int
 		# return numpy.argsort(-similarity_array[1].astype(float))[-n:]
 		return similarity_array[0][0:n]
 
-def init(file_name, cnames):
+def init(content_url):
 	global dataFrame, objects_list, dataFrame_clean, similarity_matrix, similarity_dic
-	dataFrame = prepare_data(file_name)
+	dataFrame = prepare_data(content_url)
 	objects_list = get_object_list(dataFrame)
-	dataFrame_clean = clean_data(prepare_data(file_name))
+	dataFrame_clean = clean_data(prepare_data(content_url))
 	similarity_matrix = compute_similarity_matrix2(numpy.array(dataFrame_clean))
 	similarity_dic = dictionarizearray(similarity_matrix, objects_list)
+
+def calculate(client_id, client_name, content_type):
+	for i in dataFrame.index:
+		id = dataFrame.ix[i][cnames[0]]
+		email = dataFrame.ix[i][cnames[1]]
+		reco = get_n_recommended_objects_for_user(10, id).tolist()
+		collection = db[client_name]
+		collection.update({"user_id":id}, {"$set": {"client_id": client_id, "email": email, content_type+"_recommendation" : reco}}, True)
 
 def hello():
 	return "hello"
 
-file_name = 'C:\Users\G7V\Downloads\liste-commandes.csv'#'/Users/Jeremie/Downloads/liste-commandes.csv'
-cnames = ['user_id', 'email', 'user_history']
-init(file_name, cnames)
+content_url = '/Users/Jeremie/Downloads/liste-commandes.csv'#'C:\Users\G7V\Downloads\liste-commandes.csv'
+init(content_url)
+calculate(content_url)
 
 
 
