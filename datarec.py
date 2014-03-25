@@ -137,7 +137,7 @@ def init(file_name, cnames):
 def hello():
 	return "hello"
 
-file_name = '/Users/Jeremie/Downloads/liste-commandes.csv'#C:\Users\G7V\Downloads\exportcsv\liste-likesphotos-user.csv'
+file_name = 'C:\Users\G7V\Downloads\liste-commandes.csv'#'/Users/Jeremie/Downloads/liste-commandes.csv'
 cnames = ['user_id', 'email', 'user_history']
 init(file_name, cnames)
 
