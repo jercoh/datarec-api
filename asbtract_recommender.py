@@ -4,10 +4,11 @@ import numpy as numpy
 import re
 import operator
 import argparse
-import datarec_db
+import datarec_dbconfig
 import pymongo
 
-db = pymongo.MongoClient()['test_database']
+db_name = datarec_dbconfig.getName()
+db = pymongo.MongoClient()[db_name]
 cnames = ['id', 'email', 'history']
 
 def sim(u,v):
@@ -144,7 +145,7 @@ def calculate(client_id, client_name, content_type):
 		email = dataFrame.ix[i][cnames[1]]
 		reco = get_n_recommended_objects_for_user(10, id).tolist()
 		collection = db[client_name]
-		collection.update({"user_id":id}, {"$set": {"client_id": client_id, "email": email, content_type+"_recommendation" : reco}}, True)
+		collection.update({"user_id":id.astype(int)}, {"$set": {"client_id": client_id, "email": email, content_type+"_recommendation" : reco}}, True)
 
 def hello():
 	return "hello"

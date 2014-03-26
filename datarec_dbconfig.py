@@ -4,12 +4,12 @@ from mongoengine import *
  
 MONGO_URL = os.environ.get('MONGOHQ_URL')
 
-def mongo_connect():
+def getName():
 	if MONGO_URL:
 	  # Get a connection
-	  connect(MONGO_URL)
+	  return MONGO_URL
 	  # Get the database
 	  #db = connection[urlparse(MONGO_URL).path[1:]]
 	else:
 	  # Not on an app with the MongoHQ add-on, do some localhost action
-	  connect('test_database')
+	  return 'test_database'
