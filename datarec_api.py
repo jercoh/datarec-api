@@ -10,6 +10,7 @@ from flask.ext.mongorest.views import ResourceView
 from flask.ext.mongorest.resources import Resource
 from flask.ext.mongorest import operators as ops
 from flask.ext.mongorest import methods  
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import os
 import datarec_dbconfig
 from bson.json_util import dumps
@@ -43,6 +44,22 @@ class User(db.Document):
     name = db.StringField(unique=True, required=True)
     contents = db.ListField(db.EmbeddedDocumentField(Content))
 
+    def generate_auth_token(self, expiration = 600):
+        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+        return s.dumps({ 'id': self.id })
+        
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None # valid token, but expired
+        except BadSignature:
+            return None # invalid token
+        user = User.objects(id = data['id'])
+        return user
+
 class UserResource(Resource):
     document = User
     filters = {
@@ -66,6 +83,24 @@ class InvalidUsage(Exception):
         rv = dict(self.payload or ())
         rv['message'] = self.message
         return rv
+
+
+@app.route(base_url+'/token')
+def get_auth_token():
+    token = User.generate_auth_token()
+    return jsonify({ 'token': token.decode('ascii') })
+
+@auth.verify_password
+def verify_password(token):
+    # first try to authenticate by token
+    user = User.verify_auth_token(token)
+    if not user:
+        # try to authenticate with username/password
+        user = User.query.filter_by(username = username_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
+    g.user = user
+    return True
 
 @app.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
