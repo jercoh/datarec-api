@@ -52,6 +52,27 @@ class UserResource(Resource):
         'contents' : ContentResource
     }
 
+class InvalidUsage(Exception):
+    status_code = 400
+
+    def __init__(self, message, status_code=None, payload=None):
+        Exception.__init__(self)
+        self.message = message
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['message'] = self.message
+        return rv
+
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
 @api.register(name='users', url= base_url+'/users/')
 class UserView(ResourceView):
     resource = UserResource
@@ -65,7 +86,7 @@ def get_recommendations(client_name):
         recommendations = dumps(list(clientCollection.find({}, {'_id': 0})))
         return recommendations
     else:
-        abort(400)
+        raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
 @app.route(base_url+'/<client_name>/recommendations/<content_type>/', methods = ['GET'])
 def get_specific_recommendations(client_name, content_type):
@@ -75,7 +96,7 @@ def get_specific_recommendations(client_name, content_type):
         recommendations = dumps(list(clientCollection.find({ }, {'user_id':1, 'email':1, content_type+"_recommendation": 1, '_id': 0})))
         return recommendations
     else:
-        abort(400)
+        raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
 @app.route(base_url+'/<client_name>/recommendations/users/<int:user_id>/', methods = ['GET'])
 def get_recommendations_for_user(client_name, user_id):
@@ -85,7 +106,7 @@ def get_recommendations_for_user(client_name, user_id):
         recommendations = dumps(list(clientCollection.find({'user_id': user_id }, {'_id': 0})))
         return recommendations
     else:
-        abort(400)
+        raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
 @app.route(base_url+'/<client_name>/recommendations/users/<int:user_id>/<content_type>/', methods = ['GET'])
 def get_specific_recommendations_for_user(client_name, user_id, content_type):
@@ -95,7 +116,7 @@ def get_specific_recommendations_for_user(client_name, user_id, content_type):
         recommendations = dumps(list(clientCollection.find({'user_id': user_id }, {'user_id':1, 'email':1, content_type+"_recommendation": 1,'_id': 0})))
         return recommendations
     else:
-        abort(400)
+        raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
 
 
