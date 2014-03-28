@@ -84,7 +84,10 @@ def get_recommendations(client_name):
     if client_name in collection_names:
         clientCollection = db_pymongo[client_name]
         recommendations = dumps(list(clientCollection.find({}, {'_id': 0})))
-        return recommendations
+        if recommendations == '[]':
+            raise InvalidUsage('You have not generated any recommendation yet.', status_code=404)
+        else:
+            return recommendations
     else:
         raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
@@ -93,8 +96,11 @@ def get_specific_recommendations(client_name, content_type):
     collection_names = db_pymongo.collection_names()
     if client_name in collection_names:
         clientCollection = db_pymongo[client_name]
-        recommendations = dumps(list(clientCollection.find({ }, {'user_id':1, 'email':1, content_type+"_recommendation": 1, '_id': 0})))
-        return recommendations
+        recommendations = dumps(list(clientCollection.find({ content_type+"_recommendation": {'$exists': 'true'}}, {'user_id':1, 'email':1, content_type+"_recommendation": 1, '_id': 0})))
+        if recommendations == '[]':
+            raise InvalidUsage('No '+content_type+' recommendations have been generated yet.', status_code=404)
+        else:
+            return recommendations
     else:
         raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
@@ -104,7 +110,10 @@ def get_recommendations_for_user(client_name, user_id):
     if client_name in collection_names:
         clientCollection = db_pymongo[client_name]
         recommendations = dumps(list(clientCollection.find({'user_id': user_id }, {'_id': 0})))
-        return recommendations
+        if recommendations == '[]':
+            raise InvalidUsage('No recommendation have been generated for user '+str(user_id)+' yet.', status_code=404)
+        else:
+            return recommendations
     else:
         raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
@@ -113,8 +122,11 @@ def get_specific_recommendations_for_user(client_name, user_id, content_type):
     collection_names = db_pymongo.collection_names()
     if client_name in collection_names:
         clientCollection = db_pymongo[client_name]
-        recommendations = dumps(list(clientCollection.find({'user_id': user_id }, {'user_id':1, 'email':1, content_type+"_recommendation": 1,'_id': 0})))
-        return recommendations
+        recommendations = dumps(list(clientCollection.find({'user_id': user_id, content_type+"_recommendation": {'$exists': 'true'}}, {'user_id':1, 'email':1, content_type+"_recommendation": 1,'_id': 0})))
+        if recommendations == '[]':
+            raise InvalidUsage('No '+content_type+' recommendation have been generated for user '+str(user_id)+' yet.', status_code=404)
+        else:
+            return recommendations
     else:
         raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
