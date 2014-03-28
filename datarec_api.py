@@ -18,6 +18,7 @@ import os
 import datarec_dbconfig
 from bson.json_util import dumps
 import pymongo
+from mongoengine import connect
 
 app = Flask(__name__, static_url_path = "")
 auth = HTTPBasicAuth()
@@ -27,8 +28,7 @@ app.config.from_object('app_config.DevelopmentConfig')
 db = MongoEngine(app)
 api = MongoRest(app)
 
-db_name = datarec_dbconfig.getName()
-db_pymongo = pymongo.MongoClient()[db_name]
+db_pymongo = db.connection
 
 base_url = '/api/v1.0'
 
