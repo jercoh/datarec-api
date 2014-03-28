@@ -4,25 +4,25 @@
 Flask-RESTful extension."""
 
 from flask import Flask, jsonify, abort, request, make_response, url_for
+from flask.ext.httpauth import HTTPBasicAuth
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.mongorest import MongoRest
 from flask.ext.mongorest.views import ResourceView
 from flask.ext.mongorest.resources import Resource
 from flask.ext.mongorest import operators as ops
 from flask.ext.mongorest import methods  
+from flask.ext.mongorest.authentication import AuthenticationBase
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import SignatureExpired, BadSignature
 import os
 import datarec_dbconfig
 from bson.json_util import dumps
 import pymongo
 
 app = Flask(__name__, static_url_path = "")
-MONGO_URL = os.environ.get('MONGOHQ_URL')
-if MONGO_URL:
-    app.config.update(
-        MONGO_URL = MONGO_URL
-    )
-else:
-    app.config['MONGODB_SETTINGS'] = {'DB': 'test_database'}
+auth = HTTPBasicAuth()
+
+app.config.from_object('app_config.DevelopmentConfig')
 
 db = MongoEngine(app)
 api = MongoRest(app)
@@ -32,25 +32,16 @@ db_pymongo = pymongo.MongoClient()[db_name]
 
 base_url = '/api/v1.0'
 
-class Content(db.EmbeddedDocument):
-    content = db.StringField()
-    url = db.URLField()
-
-class ContentResource(Resource):
-    document = Content
-
-class User(db.Document):
-    name = db.StringField(unique=True, required=True)
-    contents = db.ListField(db.EmbeddedDocumentField(Content))
-
-class UserResource(Resource):
-    document = User
-    filters = {
-        'name': [ops.Exact, ops.Startswith]
-    }
-    related_resources = {
-        'contents' : ContentResource
-    }
+@auth.verify_password
+def authorized(username, token):
+    s = Serializer(app.config['SECRET_KEY'])
+    try:
+        data = s.loads(token)
+    except SignatureExpired:
+        return False # valid token, but expired
+    except BadSignature:
+        return False # invalid token
+    return True
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -73,12 +64,34 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
-@api.register(name='users', url= base_url+'/users/')
-class UserView(ResourceView):
-    resource = UserResource
+class Content(db.EmbeddedDocument):
+    content = db.StringField()
+    url = db.URLField()
+
+class ContentResource(Resource):
+    document = Content
+
+class Client(db.Document):
+    name = db.StringField(unique=True, required=True)
+    contents = db.ListField(db.EmbeddedDocumentField(Content))
+
+class ClientResource(Resource):
+    document = Client
+    filters = {
+        'name': [ops.Exact, ops.Startswith]
+    }
+    related_resources = {
+        'contents' : ContentResource
+    }
+
+
+@api.register(name='clients', url= base_url+'/clients/')
+class ClientView(ResourceView):
+    resource = ClientResource
     methods = [methods.Create, methods.Update, methods.Fetch, methods.List, methods.Delete]
 
 @app.route(base_url+'/<client_name>/recommendations/', methods = ['GET'])
+@auth.login_required
 def get_recommendations(client_name):
     collection_names = db_pymongo.collection_names()
     if client_name in collection_names:
@@ -92,6 +105,7 @@ def get_recommendations(client_name):
         raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
 @app.route(base_url+'/<client_name>/recommendations/<content_type>/', methods = ['GET'])
+@auth.login_required
 def get_specific_recommendations(client_name, content_type):
     collection_names = db_pymongo.collection_names()
     if client_name in collection_names:
@@ -105,6 +119,7 @@ def get_specific_recommendations(client_name, content_type):
         raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
 @app.route(base_url+'/<client_name>/recommendations/users/<int:user_id>/', methods = ['GET'])
+@auth.login_required
 def get_recommendations_for_user(client_name, user_id):
     collection_names = db_pymongo.collection_names()
     if client_name in collection_names:
@@ -118,6 +133,7 @@ def get_recommendations_for_user(client_name, user_id):
         raise InvalidUsage('This client does not exist. Enter a valid client name', status_code=404)
 
 @app.route(base_url+'/<client_name>/recommendations/users/<int:user_id>/<content_type>/', methods = ['GET'])
+@auth.login_required
 def get_specific_recommendations_for_user(client_name, user_id, content_type):
     collection_names = db_pymongo.collection_names()
     if client_name in collection_names:
