@@ -6,6 +6,9 @@ import operator
 import argparse
 import datarec_dbconfig
 import pymongo
+from helper.json_helper import readJsonFile
+from helper.get_data import getProductIds, getUserProductIds 
+
 
 db_name = datarec_dbconfig.getName()
 db = pymongo.MongoClient()[db_name]
@@ -61,42 +64,21 @@ def compute_similarity_matrix2(matrix):
 	a = numpy.sqrt(sum(matrix*matrix))[numpy.newaxis]
 	return normalize_matrix(matrix.T.dot(matrix)*1/(a.T.dot(a)), -2, 1)
 
-def sort_nicely( l ):
-	""" Sort the given list in the way that humans expect.
-	"""
-	convert = lambda text: int(text) if text.isdigit() else text
-	alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
-	l.sort( key=alphanum_key )
+def prepare_data(jsonProducts, jsonUsers):
+	products = readJsonFile(jsonProducts)
+	users = readJsonFile(jsonUsers)
+	productIds = getProductIds(products)
+	userProductIds = getUserProductIds(users)
 
-def read_table_from_file(file, cnames):
-	return pandas.read_table(file, sep=';', header=None, names=cnames)
-
-
-def get_object_list(dataFrame):
-	object_iter = (set(x.split('|')) for x in getattr(dataFrame, cnames[2]))
-	objects = sorted(set.union(*object_iter))
-	sort_nicely(objects)
-	return objects
-
-def prepare_data(file):
-	user_item_matrix = read_table_from_file(file, cnames)
-	objects = get_object_list(user_item_matrix)
-	dummies = DataFrame(numpy.zeros((len(user_item_matrix), len(objects))), columns=objects)
-	for i, ph in enumerate(getattr(user_item_matrix, cnames[2])):
-		dummies.ix[i, ph.split('|')] = 1
+	# objects = get_object_list(user_item_matrix)
+	dummies = DataFrame(numpy.zeros((len(users), len(productIds))), columns=['user_id', productIds])
+	for i in range(len(userProductIds)):
+		dummies.ix[i]['user_id'] = userProductIds[i]['user_id']
+		for p in userProductIds[i]['purchases']: 
+			dummies.ix[i][p] = 1
 	#object_windic = user_item_matrix.join(dummies.add_prefix('object_'))
 	object_windic = user_item_matrix.join(dummies)
 	return object_windic
-
-def clean_data(dataFrame):
-	# remove useless columns
-	dataFrame = dataFrame.drop(cnames[0],1)
-	dataFrame = dataFrame.drop(cnames[1],1)
-	dataFrame = dataFrame.drop(cnames[2],1)
-	# remove Null columns and rows
-	dataFrame = dataFrame.dropna(axis=0,how='all')
-	dataFrame = dataFrame.dropna(axis=1,how='all')
-	return dataFrame
 
 def get_n_most_similar_objects(n, object_id):
 	vect = similarity_dic[object_id]
@@ -147,8 +129,6 @@ def calculate(client_id, client_name, content_type):
 		collection = db[client_name]
 		collection.update({"user_id":id.astype(int)}, {"$set": {"client_id": client_id, "email": email, content_type+"_recommendation" : reco}}, True)
 
-def hello():
-	return "hello"
 
 content_url = '/Users/Jeremie/Downloads/liste-commandes.csv'#'C:\Users\G7V\Downloads\liste-commandes.csv'
 init(content_url)
