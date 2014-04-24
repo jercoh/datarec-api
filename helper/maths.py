@@ -19,7 +19,10 @@ def normalize_matrix(matrix, axis, normType):
 		norm_vector  = numpy.sum(matrix,axis=axis) # axis = -1 for row normalization, axis = -2 for columns
 	elif normType == 2:
 		norm_vector  = numpy.sum(matrix**2,axis=axis)**(1./2) # axis = -1 for row normalization, axis = -2 for columns
-	return matrix / norm_vector[:,numpy.newaxis].astype(float)
+	if axis == -1
+		return matrix / norm_vector[numpy.newaxis,:].astype(float)
+	elif axis == -2
+		return matrix / norm_vector[:, numpy.newaxis].astype(float)
 
 def dictionarizearray(x,list_of_columns):
 	"""
@@ -41,4 +44,4 @@ def dictionarizearray(x,list_of_columns):
 
 def compute_similarity_matrix2(matrix):
 	a = numpy.sqrt(sum(matrix*matrix))[numpy.newaxis]
-	return normalize_matrix(matrix.T.dot(matrix)*1/(a.T.dot(a)), -2, 1)
+	return normalize_matrix(matrix.T.dot(matrix)*1/(a.dot(a.T)), -1, 1)

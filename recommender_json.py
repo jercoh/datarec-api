@@ -19,14 +19,14 @@ class ItemRecommender:
 		users = readJsonFile(jsonUsers)
 		self.productIds = getProductIds(products)
 		self.userProductIds = getUserProductIds(users)
-		dummies = DataFrame(numpy.zeros((len(users), len(self.productIds))), columns=['user_id']+self.productIds)
+		dummies = DataFrame(numpy.zeros((len(users), len(self.productIds)+1)), columns=['user_id']+self.productIds)
 		for i in range(len(self.userProductIds)):
 			dummies.ix[i]['user_id'] = self.userProductIds[i]['user_id']
 			for p in self.userProductIds[i]['purchases']: 
 				dummies.ix[i][p] = 1
 		self.dataFrame = dummies
 		self.cleanDataFrame = cleanData(dummies.copy(), ['user_id'])
-		self.similarity_matrix = helper.maths.compute_similarity_matrix2(numpy.array(self.cleanDataFram))
+		self.similarity_matrix = helper.maths.compute_similarity_matrix2(numpy.array(self.cleanDataFrame))
 		self.similarity_dic = helper.maths.dictionarizearray(self.similarity_matrix, self.productIds)
 
 
@@ -70,8 +70,3 @@ class ItemRecommender:
 			reco = get_n_recommended_objects_for_user(10, id).tolist()
 			collection = db[client_name]
 			collection.update({"user_id":id.astype(int)}, {"$set": {"client_id": client_id, "email": email, content_type+"_recommendation" : reco}}, True)
-
-
-content_url = '/Users/Jeremie/Downloads/liste-commandes.csv'#'C:\Users\G7V\Downloads\liste-commandes.csv'
-init(content_url)
-calculate(content_url)
