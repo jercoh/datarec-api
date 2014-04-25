@@ -1,6 +1,5 @@
-import pandas as pandas
-from pandas import DataFrame
-import numpy as numpy
+import pandas
+import numpy
 
 def sim(u,v):
 	norm_u = numpy.linalg.norm(u)
@@ -19,9 +18,9 @@ def normalize_matrix(matrix, axis, normType):
 		norm_vector  = numpy.sum(matrix,axis=axis) # axis = -1 for row normalization, axis = -2 for columns
 	elif normType == 2:
 		norm_vector  = numpy.sum(matrix**2,axis=axis)**(1./2) # axis = -1 for row normalization, axis = -2 for columns
-	if axis == -1
+	if axis == -1:
 		return matrix / norm_vector[numpy.newaxis,:].astype(float)
-	elif axis == -2
+	elif axis == -2:
 		return matrix / norm_vector[:, numpy.newaxis].astype(float)
 
 def dictionarizearray(x,list_of_columns):
@@ -44,4 +43,5 @@ def dictionarizearray(x,list_of_columns):
 
 def compute_similarity_matrix2(matrix):
 	a = numpy.sqrt(sum(matrix*matrix))[numpy.newaxis]
-	return normalize_matrix(matrix.T.dot(matrix)*1/(a.dot(a.T)), -1, 1)
+	#return normalize_matrix(matrix.T.dot(matrix)*1/(a.dot(a.T)), -1, 1)
+	return matrix.T.dot(matrix)*1/(a.dot(a.T))
