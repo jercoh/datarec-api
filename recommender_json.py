@@ -2,6 +2,7 @@ from pandas import DataFrame
 import numpy as numpy
 import datarec_dbconfig
 import pymongo
+import operator
 from helper.json_helper import readJsonFile
 from helper.get_data import getProductIds, getUserProductIds
 from helper.dataframe_helper import cleanData
@@ -43,17 +44,16 @@ class ItemRecommender:
 	def get_n_recommended_objects_for_user(self, n, id):#n et id sont des int
 		similarity = {}
 		C = set()
-		user = dataFrame[cnames[0]].map(lambda x: x == id)
-		user_history = dataFrame[user][cnames[2]].iloc[0].split('|')
-		for object in user_history:
-			similar_objects = get_n_most_similar_objects(2*n, object)
+		user = (item for item in self.userProductIds if item["user_id"] == id).next()
+		for product in user['purchases']:
+			similar_objects = self.get_n_most_similar_objects(2*n, product)
 			C = C.union(set(similar_objects))
-		C = C - set(user_history)
-		for object in C:
+		C = C - set(user['purchases'])
+		for product in C:
 			m = 0
-			for purchase in user_history:
-				m += sim_object(object, purchase)
-			similarity[object]= m
+			for purchase in user['purchases']:
+				m += helper.maths.sim_object(product, purchase, self.similarity_dic, self.productIds)
+			similarity[product]= m
 		similarity = sorted(similarity.iteritems(), key=operator.itemgetter(1))
 		similarity.reverse()
 		similarity_array = numpy.array(similarity).T

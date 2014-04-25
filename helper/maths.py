@@ -9,7 +9,7 @@ def sim(u,v):
 	else:
 		return 0
 
-def sim_object(objectId_1, objectId_2):
+def sim_object(objectId_1, objectId_2, similarity_dic, objects_list):
 	vect = similarity_dic[str(objectId_1)]
 	return vect[objects_list.index(str(objectId_2))]
 
