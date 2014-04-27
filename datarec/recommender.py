@@ -27,16 +27,15 @@ class ItemRecommender:
 				dummies.ix[i][p] = 1
 		self.dataFrame = dummies
 		self.cleanDataFrame = cleanData(dummies.copy(), ['user_id'])
-		self.userMatrix = helper.maths.normalize(numpy.array(self.cleanDataFrame), -1, 2)
-		self.similarity_matrix = helper.maths.compute_similarity_matrix2(numpy.array(self.cleanDataFrame))
+		cleanAsArray = numpy.array(self.cleanDataFrame)
+		self.userMatrix = helper.maths.normalize_matrix(cleanAsArray, -1, 1)
+		self.similarity_matrix = helper.maths.compute_similarity_matrix2(cleanAsArray)
 		self.similarity_dic = helper.maths.dictionarizearray(self.similarity_matrix, self.productIds)
 
 
 	def get_n_most_similar_objects(self, n, object_id):
 		vect = self.similarity_dic[object_id]
-		print vect
 		index_list = numpy.argsort(vect)[-n:]
-		print index_list
 		similar_objects = []
 		for i in range(len(index_list)):
 			similar_objects.append(self.productIds[index_list[i]])
