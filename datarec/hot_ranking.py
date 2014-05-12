@@ -14,7 +14,7 @@ def epoch_seconds(date):
 
 def hot(sales, date):
     """The hot formula."""
-    s = sales
+    s = sales if (isinstance(sales, int)) else int(sales)
     order = log(max(abs(s), 1), 10)
     seconds = epoch_seconds(date) - 1134028003
     return round(order + seconds / tau, 7)
