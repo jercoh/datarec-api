@@ -18,10 +18,8 @@ def normalize_matrix(matrix, axis, normType):
 		norm_vector  = numpy.sum(matrix,axis=axis) # axis = -1 for row normalization, axis = -2 for columns
 	elif normType == 2:
 		norm_vector  = numpy.sum(matrix**2,axis=axis)**(1./2) # axis = -1 for row normalization, axis = -2 for columns
-	if axis == -1:
-		return matrix / norm_vector[numpy.newaxis,:].astype(float)
-	elif axis == -2:
-		return matrix / norm_vector[:, numpy.newaxis].astype(float)
+	norm_vector[norm_vector==0] = 1
+	return matrix / norm_vector[:, numpy.newaxis].astype(float)
 
 def dictionarizearray(x,list_of_columns):
 	"""

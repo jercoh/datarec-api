@@ -1,6 +1,7 @@
 import app_config
 import pymongo
 import hot_ranking
+from datetime import datetime
 
 db = pymongo.MongoClient()[app_config.Config.MONGODB_DB]
 
@@ -14,7 +15,7 @@ def calculate_recommendations_for(client):
 		abstract_recommender.calculate(client_id, client_name, content_type, content_url)
 
 def calculate_popularity_for(product):
-	score = hot_ranking.hot(product["total_sales"], product["created_at"])
+	score = hot_ranking.hot(product["total_sales"], datetime.strptime(product["created_at"], '%d/%m/%y %H:%M'))
 	db.products.update({"product_id": product["product_id"]}, {"$set": {"score": score}}, True)
 
 def calculate_popularity():
