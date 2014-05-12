@@ -1,12 +1,21 @@
 from json_helper import extractAttribute, getUniqueValues
 
-def getUserProductIds(users):
+def getUserItemIds(users, contentType):
 	result = []
 	for user in users:
-		products = sum(extractAttribute(user['orders'],'products'), [])
-		ids = extractAttribute(products, 'product_id')
-		result.append({'user_id' : user['user_id'], 'purchases' : getUniqueValues(ids)})
+		if (contentType == 'purchases'):
+			try:
+				products = sum(extractAttribute(user['purchases'],'products'), [])
+				ids = extractAttribute(products, 'id')
+				result.append({'id' : user['id'], 'purchases' : getUniqueValues(ids)})
+			except KeyError:
+				pass
+		else:
+			try:
+				result.append({'id' : user['id'], contentType : user[contentType]})
+			except KeyError:
+				pass
 	return result
 
-def getProductIds(products):
-	return getUniqueValues(extractAttribute(products, "id"))
+def getItemIds(items):
+	return getUniqueValues(extractAttribute(items, "id"))

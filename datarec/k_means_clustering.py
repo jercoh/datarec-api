@@ -68,14 +68,14 @@ def cost_function(training_set, centroids, idx):
 def test():
 	# data generation
 	data = numpy.vstack((numpy.random.rand(150,2) + numpy.array([.5,.5]),numpy.random.rand(150,2)))
-	result = k_means(data,3)
+	result = k_means(data,2)
 	cost = result [2]
 	centroids = numpy.array(result[1])
 	idx = result[0]
 	# repeat 100 times k_means
 	for i in range(500):
 		# computing K-Means with K = 2 (2 clusters)
-		result = k_means(data,3)
+		result = k_means(data,2)
 		new_cost = result[2]
 		if new_cost < cost:
 			cost = new_cost
@@ -85,11 +85,9 @@ def test():
 	# assign each sample to a cluster
 	red = numpy.array([ item for item, flag in zip( data, idx ) if flag == 1 ])
 	blue = numpy.array([ item for item, flag in zip( data, idx ) if flag == 0 ])
-	green = numpy.array([ item for item, flag in zip( data, idx ) if flag == 2 ])
 
 	# some plotting using numpy's logical indexing
 	plot(red[:,0],red[:,1],'ob')
 	plot(blue[:,0],blue[:,1],'or')
-	plot(green[:,0],green[:,1],'og')
 	plot(centroids[:,0],centroids[:,1],'sg',markersize=8)
 	show()

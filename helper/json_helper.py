@@ -1,5 +1,6 @@
 import json
 import re
+import urllib2
 
 def extractAttribute(data, key):
 	if isinstance(data, dict):
@@ -21,8 +22,11 @@ def getUniqueValues(l):
 	else:
 		return sortNicely(list(set(l)))
 
-def readJsonFile(file):
-	json_data = open(file)
+def readJsonFile(url, local):
+	if (local == True):
+		json_data = open(url)
+	else:
+		json_data = urllib2.urlopen(url)
 	data = json.load(json_data)
 	json_data.close()
 	return data
