@@ -9,9 +9,9 @@ from helper.dataframe_helper import cleanData
 import helper.maths
 
 
-db_name = datarec_dbconfig.getName()
-db = pymongo.MongoClient()[db_name]
-cnames = ['id', 'email', 'history']
+# db_name = datarec_dbconfig.getName()
+# db = pymongo.MongoClient()[db_name]
+# cnames = ['id', 'email', 'history']
 
 class ItemRecommender:
 	"""Item-Based Recommender Class"""
@@ -19,14 +19,16 @@ class ItemRecommender:
 		products = readJsonFile(jsonProducts)
 		users = readJsonFile(jsonUsers)
 		self.productIds = getProductIds(products)
+		print self.productIds[0]
 		self.userProductIds = getUserProductIds(users)
 		dummies = DataFrame(numpy.zeros((len(users), len(self.productIds)+1)), columns=['user_id']+self.productIds)
 		for i in range(len(self.userProductIds)):
-			dummies.ix[i]['user_id'] = self.userProductIds[i]['user_id']
+			dummies.loc[i,'user_id'] = self.userProductIds[i]['user_id']
 			for p in self.userProductIds[i]['purchases']: 
-				dummies.ix[i][p] = 1
+				dummies.loc[i, p] = 1
 		self.dataFrame = dummies
 		self.cleanDataFrame = cleanData(dummies.copy(), ['user_id'])
+		self.userItemsMatrix = helper.maths.normalize_matrix(numpy.array(self.cleanDataFrame), -1, 2)
 		self.similarity_matrix = helper.maths.compute_similarity_matrix2(numpy.array(self.cleanDataFrame))
 		self.similarity_dic = helper.maths.dictionarizearray(self.similarity_matrix, self.productIds)
 
