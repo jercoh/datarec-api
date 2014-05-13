@@ -1,0 +1,359 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head> 
+		<title>The Beautyst - Pour vous cette semaine</title>
+	</head>
+	<body>
+
+		<table width="700px" align="center" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td>
+					<p align="center">
+						<font face="Arial, sans-serif" size="2" color="#333"><a href="http://static.thebeautyst.com/NL/NL240414/Yeux.html">
+							Afficher la version en ligne
+							</a>
+						</font>
+					</p>
+				</td>
+			</tr>
+		</table>
+
+		<table width="700px" align="center" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td>
+						<a href="http://www.thebeautyst.com/?utm_source=BlackTulip&utm_medium=Email&utm_campaign=NEWS240414">
+							<img src="http://static.thebeautyst.com/NL/NL240414/NEWS240414_03.jpg" style="border: 0px solid ; display: block; width: 700px; height: 153px">
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<p align="center">
+							<font align="center" face="Arial, sans-serif" size="4" color="#333">
+								<strong>
+									${video['title']}
+								</strong>
+							</font>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="${video['url']}">
+							<img src="${video['img']}" alt="Voir la Vidéo" style="border: 0px solid ; display: block; width: 700px; height: 467px;">
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="Ligne-NL.jpg" style="width: 700px;">
+					</td>
+				</tr>
+
+		</table>
+
+		<table width="700px" align="center" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td>
+					<p align="center">
+						<font face="Arial, sans-serif" size="4" color="#333">
+							<strong>
+								${article['title']}
+							</strong>
+						</font>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<a href="${article['url']}">
+						<img src="${article['img']}" alt="${article['title']}" style="border: 0px solid ; display: block; width: 340px; height: 222px;"> 
+					</a>      
+		        </td>
+		        <td style="width:10px;"></td>
+		        <td style="width:340px;">
+		        	<table>
+		        		<tr>
+		        			<td>
+		        				<font face="Arial, sans-serif" size="2" color="#333">
+									<strong>
+										${article['content'][:100]+'...'}
+									</strong>
+								</font>
+		        			</td>
+		        		</tr>
+                        <tr>
+                        	<td height="9" align="center" style="font-size:1px; line-height:26px;">&nbsp;</td>
+                  		</tr>
+		        		<tr>
+		        			<td style="text-align:center;">
+		        				<a href="">
+									<img src="NEWS240414_07.jpg">
+								</a>
+		        			</td>
+		        		</tr>
+		        	</table>
+		        </td>
+			</tr>
+		</table>
+
+
+		<table width="700px" align="center" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td>
+					<img src="Ligne-NL.jpg" style="width: 700px;">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<p align="center">
+						<strong>
+							<font color="#333" size="4" face="Arial, sans-serif">
+								Les Produits Tendances qu'il vous faut
+							</font>
+						</strong>
+					</p>
+				</td>
+			</tr>
+		</table>
+
+
+		<table width="700px" align="center" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td>
+					<p align="center">
+						<font color="#f68a7a" size="4" face="Arial, sans-serif">
+							${product[0]['brand']}
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#f68a7a" size="4" face="Arial, sans-serif">
+							${product[1]['brand']}
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#f68a7a" size="4" face="Arial, sans-serif">
+							${product[2]['brand']}
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#f68a7a" size="4" face="Arial, sans-serif">
+							${product[3]['brand']}
+						</font>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<a href="${product[0]['url']}">
+						<img src="${product[0]['image']}" alt="EYESLIPFACE Coffret" style="border: 0px solid ; display: block; width: 175px; height: 175px;">
+					</a>
+				</td>
+				<td>
+					<a href="${product[1]['url']}">
+						<img src="${product[1]['image']}" alt="EYESLIPFACE Coffret" style="border: 0px solid ; display: block; width: 175px; height: 175px;">
+					</a>
+				</td>
+				<td>
+					<a href="${product[2]['url']}">
+						<img src="${product[2]['image']}" alt="EYESLIPFACE Coffret" style="border: 0px solid ; display: block; width: 175px; height: 175px;">
+					</a>
+				</td>
+				<td>
+					<a href="${product[3]['url']}">
+						<img src="${product[3]['image']}" alt="EYESLIPFACE Coffret" style="border: 0px solid ; display: block; width: 175px; height: 175px;">
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<p align="center">
+						<font color="#000" size="2" face="Arial, sans-serif">
+							<strong>
+								${product[0]['name']}
+							</strong>
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#000" size="2" face="Arial, sans-serif">
+							<strong>
+								${product[1]['name']}
+							</strong>
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#000" size="2" face="Arial, sans-serif">
+							<strong>
+								${product[2]['name']}
+							</strong>
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#000" size="2" face="Arial, sans-serif">
+							<strong>
+								${product[3]['name']}
+							</strong>
+						</font>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td align="center">
+					<a href="${product[0]['url']}">
+						<img src="http://static.thebeautyst.com/NL/NL240414/Acheter.jpg" alt="Acheter" style="border: 0px solid ; display: block; width: 87px; height: 34px;">
+					</a>
+				</td>
+				<td align="center">
+					<a href="${product[1]['url']}">
+						<img src="http://static.thebeautyst.com/NL/NL240414/Acheter.jpg" alt="Acheter" style="border: 0px solid ; display: block; width: 87px; height: 34px;">
+					</a>
+				</td>
+				<td align="center">
+					<a href="${product[2]['url']}">
+						<img src="http://static.thebeautyst.com/NL/NL240414/Acheter.jpg" alt="Acheter" style="border: 0px solid ; display: block; width: 87px; height: 34px;">
+					</a>
+				</td>
+				<td align="center">
+					<a href="${product[3]['url']}">
+						<img src="http://static.thebeautyst.com/NL/NL240414/Acheter.jpg" alt="Acheter" style="border: 0px solid ; display: block; width: 87px; height: 34px;">
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<p align="center">
+						<font color="#f68a7a" size="4" face="Arial, sans-serif">
+							${product[4]['brand']}
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#f68a7a" size="4" face="Arial, sans-serif">
+							${product[5]['brand']}
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#f68a7a" size="4" face="Arial, sans-serif">
+							${product[6]['brand']}
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#f68a7a" size="4" face="Arial, sans-serif">
+							${product[7]['brand']}
+						</font>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<a href="${product[4]['url']}">
+						<img src="${product[4]['image']}" alt="EYESLIPFACE Coffret" style="border: 0px solid ; display: block; width: 175px; height: 175px;">
+					</a>
+				</td>
+				<td>
+					<a href="${product[5]['url']}">
+						<img src="${product[5]['image']}" alt="EYESLIPFACE Coffret" style="border: 0px solid ; display: block; width: 175px; height: 175px;">
+					</a>
+				</td>
+				<td>
+					<a href="${product[6]['url']}">
+						<img src="${product[6]['image']}" alt="EYESLIPFACE Coffret" style="border: 0px solid ; display: block; width: 175px; height: 175px;">
+					</a>
+				</td>
+				<td>
+					<a href="${product[7]['url']}">
+						<img src="${product[7]['image']}" alt="EYESLIPFACE Coffret" style="border: 0px solid ; display: block; width: 175px; height: 175px;">
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<p align="center">
+						<font color="#000" size="2" face="Arial, sans-serif">
+							<strong>
+								${product[4]['name']}
+							</strong>
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#000" size="2" face="Arial, sans-serif">
+							<strong>
+								${product[5]['name']}
+							</strong>
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#000" size="2" face="Arial, sans-serif">
+							<strong>
+								${product[6]['name']}
+							</strong>
+						</font>
+					</p>
+				</td>
+				<td>
+					<p align="center">
+						<font color="#000" size="2" face="Arial, sans-serif">
+							<strong>
+								${product[7]['name']}
+							</strong>
+						</font>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td align="center">
+					<a href="${product[4]['url']}">
+						<img src="http://static.thebeautyst.com/NL/NL240414/Acheter.jpg" alt="Acheter" style="border: 0px solid ; display: block; width: 87px; height: 34px;">
+					</a>
+				</td>
+				<td align="center">
+					<a href="${product[5]['url']}">
+						<img src="http://static.thebeautyst.com/NL/NL240414/Acheter.jpg" alt="Acheter" style="border: 0px solid ; display: block; width: 87px; height: 34px;">
+					</a>
+				</td>
+				<td align="center">
+					<a href="${product[6]['url']}">
+						<img src="http://static.thebeautyst.com/NL/NL240414/Acheter.jpg" alt="Acheter" style="border: 0px solid ; display: block; width: 87px; height: 34px;">
+					</a>
+				</td>
+				<td align="center">
+					<a href="${product[7]['url']}">
+						<img src="http://static.thebeautyst.com/NL/NL240414/Acheter.jpg" alt="Acheter" style="border: 0px solid ; display: block; width: 87px; height: 34px;">
+					</a>
+				</td>
+			</tr>
+		</table>
+		<p align="center">
+			<font face="Arial, sans-serif" size="1"; style="color: #6e6e6e">
+				Si vous ne souhaitez plus recevoir d&apos;informations de la part de The Beautyst, 
+			</font>
+			<a href="../../../../Downloads/*:UNSUB:*">
+				<font face="Arial, sans-serif" size="1">
+					cliquez ici.
+				</font>
+			</a>
+		</p>
+	</body>
+</html>
+
