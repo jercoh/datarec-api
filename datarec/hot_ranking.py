@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 from math import log
 
 epoch = datetime(1970, 1, 1)
-tau = 17735274
+# tau = 17735274
+tau = 1728000
 
 def epoch_seconds(date):
     """Returns the number of seconds from the epoch to date."""
