@@ -1,3 +1,5 @@
 venv
 *.pyc
 app_config.py
+*.json
+emailing.py
